@@ -277,7 +277,7 @@ export default function OrdersList() {
         <table className="min-w-full">
           <thead>
             <tr className="text-left text-[#8e8e8e] text-sm border-b border-gray-200">
-              <th className="pb-2 font-normal">���</th>
+              <th className="pb-2 font-normal">ID</th>
               <th className="pb-2 font-normal">Дата</th>
               <th className="pb-2 font-normal">Клиент</th>
               <th className="pb-2 font-normal hidden md:table-cell">Услуги</th>
