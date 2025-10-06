@@ -1,0 +1,427 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .notification-container {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .login-form {
+    @apply bg-white rounded-2xl shadow-lg p-8 w-full max-w-md;
+  }
+
+  .login-input {
+    @apply w-full px-4 py-3 border border-gray-300 rounded-full text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent;
+  }
+
+  .login-input-error {
+    @apply border-red-500 focus:ring-red-500;
+  }
+
+  .login-button {
+    @apply w-full bg-blue-600 text-white py-3 rounded-full font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .role-modal {
+    @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4;
+  }
+
+  .role-modal-content {
+    @apply bg-white rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto;
+  }
+
+  .role-permission-grid {
+    @apply grid grid-cols-3 gap-4 items-center py-2;
+  }
+
+  .role-permission-label {
+    @apply text-sm text-gray-700;
+  }
+
+  .role-radio-group {
+    @apply flex items-center space-x-1;
+  }
+
+  .role-radio {
+    @apply w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500;
+  }
+
+  .status-badge {
+    @apply px-3 py-1 rounded-full text-xs font-medium;
+  }
+
+  .status-active {
+    @apply bg-green-100 text-green-800;
+  }
+
+  .status-inactive {
+    @apply bg-red-100 text-red-800;
+  }
+
+  .sidebar-nav-item {
+    @apply flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors;
+  }
+
+  .sidebar-nav-item-active {
+    @apply bg-blue-100 text-blue-900;
+  }
+
+  .sidebar-nav-item-inactive {
+    @apply text-gray-700 hover:bg-gray-100;
+  }
+
+  .dashboard-card {
+    @apply bg-white rounded-lg shadow p-6;
+  }
+
+  .dashboard-stat {
+    @apply text-3xl font-bold text-gray-900;
+  }
+
+  .dashboard-label {
+    @apply text-sm text-gray-600;
+  }
+}
+
+/* Стили для печати */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+
+  .print-container,
+  .print-container * {
+    visibility: visible;
+  }
+
+  .print-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+  }
+
+  .print-container.a4.portrait {
+    width: 210mm;
+    min-height: 297mm;
+  }
+
+  .print-container.a4.landscape {
+    width: 297mm;
+    min-height: 210mm;
+  }
+
+  .print-container.a5.portrait {
+    width: 148mm;
+    min-height: 210mm;
+  }
+
+  .print-container.a5.landscape {
+    width: 210mm;
+    min-height: 148mm;
+  }
+
+  .print-container.letter.portrait {
+    width: 216mm;
+    min-height: 279mm;
+  }
+
+  .print-container.letter.landscape {
+    width: 279mm;
+    min-height: 216mm;
+  }
+
+  .print-section {
+    page-break-inside: avoid;
+  }
+
+  a:after {
+    content: none !important;
+  }
+
+  .notification-container {
+    display: none;
+  }
+}
+
+/* Стили для предпросмотра печати */
+.print-container {
+  background: white;
+  padding: 20px;
+  max-width: 100%;
+  margin: 0 auto;
+  font-size: 12px;
+}
+
+.print-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.print-header h1 {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.print-content {
+  margin-bottom: 20px;
+}
+
+.print-section {
+  margin-bottom: 20px;
+}
+
+.print-section h2 {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #2055a4;
+}
+
+.print-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.label {
+  font-size: 10px;
+  color: #666;
+  margin-bottom: 2px;
+}
+
+.value {
+  font-weight: 500;
+}
+
+.comments-section {
+  margin-top: 10px;
+}
+
+.comments {
+  padding: 8px;
+  background-color: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.print-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.print-table th,
+.print-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.print-table th {
+  background-color: #f5f5f5;
+  font-weight: 500;
+}
+
+.tech-passports {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.tech-passport {
+  border: 1px solid #eee;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.tech-passport h3 {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.status-history-section {
+  margin-top: 20px;
+}
+
+.print-footer {
+  margin-top: 30px;
+  padding-top: 10px;
+  border-top: 1px solid #ddd;
+  font-size: 10px;
+  color: #666;
+  text-align: center;
+}
+
+.print-preview-modal {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.print-preview-content {
+  background: white;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.print-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.print-preview-body {
+  padding: 20px;
+}
+
+.print-preview-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 15px 20px;
+  border-top: 1px solid #eee;
+  gap: 10px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out forwards;
+}
