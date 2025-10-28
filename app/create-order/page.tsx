@@ -1473,8 +1473,8 @@ export default function CreateOrder() {
           )}
 
           {/* Services Table */}
-          <div className="overflow-x-auto">
-            <table className="min-w-full">
+          <div className="w-full">
+            <table className="w[75vw]">
               <thead>
               <tr className="text-left text-[#8e8e8e] text-sm">
                 <th className="pb-2 font-normal w-10">№</th>
@@ -1574,7 +1574,7 @@ export default function CreateOrder() {
                                 }}
                                 className="text-[#2055a4] hover:text-[#1a4a8f] text-xs"
                             >
-                              Добавить
+                              +
                             </button>
                           </div>
                       ) : (

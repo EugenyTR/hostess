@@ -126,7 +126,7 @@ export default function DatePicker({
       </div>
 
       {isOpen && (
-        <div className="absolute z-50 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg p-4 w-64">
+        <div className="absolute z-50 mt-1 right-0.5 bg-white border border-gray-300 rounded-lg shadow-lg p-4 w-64">
           <div className="flex items-center justify-between mb-4">
             <button onClick={handlePreviousMonth} className="p-1 hover:bg-gray-100 rounded" type="button">
               <ChevronLeft className="w-5 h-5" />
