@@ -1476,7 +1476,7 @@ export default function CreateOrder() {
           <div className="w-full">
             <table className="w[75vw]">
               <thead>
-              <tr className="text-left text-[#8e8e8e] text-sm">
+              <tr className="text-left text-[#8e8e8e] text-xs">
                 <th className="pb-2 font-normal w-10">№</th>
                 <th className="pb-2 font-normal">Услуга</th>
                 <th className="pb-2 font-normal w-20">Кол-во *</th>
@@ -1494,8 +1494,8 @@ export default function CreateOrder() {
               <tbody className="bg-gray-100">
               {orderServices.map((service, index) => (
                   <tr key={service.id} className="border-t border-gray-200">
-                    <td className="py-3 px-4 text-sm">{index + 1}</td>
-                    <td className="py-3 px-4 text-sm">
+                    <td className="py-2 px-2 text-xs">{index + 1}</td>
+                    <td className="py-2 px-2 text-xs">
                       <div className="flex items-center">
                         <span>{service.serviceName}</span>
                         {service.appliedPromotion && (
@@ -1509,14 +1509,14 @@ export default function CreateOrder() {
                         )}
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-sm relative">
+                    <td className="py-2 px-2 text-xs relative">
                       <input
                           type="text"
                           className={`w-full px-2 py-1 border ${
                               touched[`quantity-${service.id}`] && errors[`quantity-${service.id}`]
                                   ? "border-[#e74c3c] bg-red-50"
                                   : "border-gray-300"
-                          } rounded text-sm ${service.quantity <= 0 && "ring-2 ring-red-200"}`}
+                          } rounded text-xs ${service.quantity <= 0 && "ring-2 ring-red-200"}`}
                           value={service.quantity}
                           onChange={(e) => handleQuantityChange(service.id, e.target.value)}
                       />
@@ -1526,7 +1526,7 @@ export default function CreateOrder() {
                           </div>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-sm">
+                    <td className="py-2 px-2 text-xs">
                       <div className="flex flex-col">
                         {service.appliedPromotion && service.originalPrice ? (
                             <>
@@ -1538,7 +1538,7 @@ export default function CreateOrder() {
                         )}
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-sm">
+                    <td className="py-2 px-2 text-xs">
                       <div className="flex flex-col">
                         {service.appliedPromotion && service.originalTotal ? (
                             <>
@@ -1551,7 +1551,7 @@ export default function CreateOrder() {
                       </div>
                     </td>
 
-                    <td className="py-3 px-4 text-sm">
+                    <td className="py-2 px-2 text-xs">
                       {service.images.length > 0 ? (
                           <div className="flex items-center gap-2">
                             <div
@@ -1590,7 +1590,7 @@ export default function CreateOrder() {
                       )}
                     </td>
 
-                    <td className="py-3 px-4 text-sm relative">
+                    <td className="py-2 px-2 text-xs relative">
                       <div
                           data-dropdown="size"
                           className="flex items-center justify-between border border-gray-300 rounded px-2 py-1 cursor-pointer bg-white"
@@ -1622,7 +1622,7 @@ export default function CreateOrder() {
                                 </div>
                             ))}
                             <div
-                                className="p-1 hover:bg-gray-100 cursor-pointer text-sm flex items-center text-[#2055a4]"
+                                className="p-1 hover:bg-gray-100 cursor-pointer text-xs flex items-center text-[#2055a4]"
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   setShowAddSizeModal(true)
@@ -1635,7 +1635,7 @@ export default function CreateOrder() {
                           </div>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-sm relative">
+                    <td className="py-2 px-2 text-xs relative">
                       <div
                           data-dropdown="brand"
                           className="flex items-center justify-between border border-gray-300 rounded px-2 py-1 cursor-pointer bg-white"
@@ -1669,7 +1669,7 @@ export default function CreateOrder() {
                           </div>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-sm relative">
+                    <td className="py-2 px-2 text-xs relative">
                       <div
                           data-dropdown="color"
                           className="flex items-center justify-between border border-gray-300 rounded px-2 py-1 cursor-pointer bg-white"
@@ -1703,7 +1703,7 @@ export default function CreateOrder() {
                           </div>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-sm">
+                    <td className="py-2 px-2 text-sm">
                       <div className="flex items-center">
                         {service.techPassport ? (
                             <div
@@ -1726,14 +1726,14 @@ export default function CreateOrder() {
                         />
                       </div>
                     </td>
-                    <td className="py-3 px-4 text-sm relative">
+                    <td className="py-2 px-2 text-xs relative">
                       <DatePicker
                           value={service.readyDate}
                           onChange={(date) => handleReadyDateChange(service.id, date)}
                           className="w-24"
                       />
                     </td>
-                    <td className="py-3 px-4 text-sm">
+                    <td className="py-2 px-2 text-sm">
                       <Trash2
                           className="w-4 h-4 text-gray-400 cursor-pointer"
                           onClick={() => handleRemoveService(service.id)}
@@ -1822,7 +1822,7 @@ export default function CreateOrder() {
                     )}
                   </div>
                 </td>
-                <td className="py-3 px-4 text-sm">
+                <td className="py-3 px-4 text-xs">
                   <div className="flex flex-col">
                     {(totalDiscount > 0 || promocodeDiscount > 0) && (
                         <span className="line-through text-gray-400 text-xs">{totalAmount} ₽</span>
@@ -1838,10 +1838,10 @@ export default function CreateOrder() {
               </tr>
               {(totalDiscount > 0 || promocodeDiscount > 0) && (
                   <tr className="border-t border-gray-200">
-                    <td colSpan={4} className="py-2 px-4 text-sm font-medium text-right text-green-600">
+                    <td colSpan={4} className="py-2 px-4 text-xs font-medium text-right text-green-600">
                       Экономия:
                     </td>
-                    <td className="py-2 px-4 text-sm font-medium text-green-600">
+                    <td className="py-2 px-4 text-xs font-medium text-green-600">
                       {totalDiscount + promocodeDiscount} ₽
                       {promocodeDiscount > 0 && (
                           <div className="text-xs text-gray-500">(промокод: {promocodeDiscount} ₽)</div>
