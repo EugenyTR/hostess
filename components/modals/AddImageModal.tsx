@@ -81,93 +81,92 @@ export default function AddImageModal({ onClose, onAdd }: AddImageModalProps) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg w-full max-w-md p-6 relative">
-        <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
-          <X className="w-5 h-5" />
-        </button>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg w-full max-w-md p-6 relative">
+          <button onClick={onClose} className="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+            <X className="w-5 h-5" />
+          </button>
 
-        <h2 className="text-xl font-medium mb-6 text-center">Добавление фото</h2>
+          <h2 className="text-xl font-medium mb-6 text-center">Добавление фото</h2>
 
-        <div
-          className={`mb-6 border-2 border-dashed ${dragActive ? "border-[#2055a4] bg-blue-50" : "border-gray-300"} rounded-lg p-6 flex flex-col items-center justify-center`}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
-        >
-          <Upload className="w-8 h-8 text-gray-400 mb-2" />
-          <p className="text-gray-500 text-center mb-4">
-            Переместите фото в поле
-            <br />
-            или{" "}
-            <span className="text-[#2055a4] cursor-pointer" onClick={openFileSelector}>
+          <div
+              className={`mb-6 border-2 border-dashed ${dragActive ? "border-[#2055a4] bg-blue-50" : "border-gray-300"} rounded-lg p-6 flex flex-col items-center justify-center`}
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
+          >
+            <Upload className="w-8 h-8 text-gray-400 mb-2" />
+            <p className="text-gray-500 text-center mb-4">
+              Переместите фото в поле
+              <br />
+              или{" "}
+              <span className="text-[#2055a4] cursor-pointer" onClick={openFileSelector}>
               выберете файл
             </span>
-          </p>
+            </p>
 
-          {/* Кнопка камеры */}
-          <button
-            onClick={openCamera}
-            className="flex items-center gap-2 px-4 py-2 bg-[#2055a4] text-white rounded-full hover:bg-[#1a4a8f] transition-colors"
-          >
-            <Camera className="w-4 h-4" />
-            <span>Использовать камеру</span>
-          </button>
+            <button
+                onClick={openCamera}
+                className="flex items-center gap-2 px-4 py-2 bg-[#2055a4] text-white rounded-full hover:bg-[#1a4a8f] transition-colors"
+            >
+              <Camera className="w-4 h-4" />
+              <span>Использовать камеру</span>
+            </button>
 
-          <input
-            type="file"
-            ref={fileInputRef}
-            className="hidden"
-            accept="image/*"
-            multiple
-            onChange={handleFileChange}
-          />
+            <input
+                type="file"
+                ref={fileInputRef}
+                className="hidden"
+                accept="image/*"
+                multiple
+                onChange={handleFileChange}
+            />
 
-          <input
-            type="file"
-            ref={cameraInputRef}
-            className="hidden"
-            accept="image/*"
-            capture="environment"
-            onChange={handleFileChange}
-          />
-        </div>
+            <input
+                type="file"
+                ref={cameraInputRef}
+                className="hidden"
+                accept="image/*"
+                capture="environment"
+                onChange={handleFileChange}
+            />
+          </div>
 
-        <div className="mb-6 max-h-60 overflow-y-auto">
-          {images.map((image) => (
-            <div key={image.id} className="flex items-center justify-between py-2 border-b border-gray-200">
-              <div className="flex items-center">
-                <img
-                  src={image.url || "/placeholder.svg"}
-                  alt={image.name}
-                  className="w-8 h-8 object-cover rounded mr-2"
-                />
-                <span className="text-gray-700">{image.name}</span>
-              </div>
-              <button onClick={() => handleRemoveImage(image.id)} className="text-gray-500 hover:text-gray-700">
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-          ))}
-        </div>
+          <div className="mb-6 max-h-60 overflow-y-auto">
+            {images.map((image) => (
+                <div key={image.id} className="flex items-center justify-between py-2 border-b border-gray-200">
+                  <div className="flex items-center">
+                    <img
+                        src={image.url || "/placeholder.svg"}
+                        alt={image.name}
+                        className="w-12 h-12 object-cover rounded mr-3"
+                    />
+                    <span className="text-gray-700 text-sm">{image.name}</span>
+                  </div>
+                  <button onClick={() => handleRemoveImage(image.id)} className="text-gray-500 hover:text-red-600">
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+            ))}
+          </div>
 
-        <div className="flex justify-center space-x-4">
-          <button
-            onClick={handleSubmit}
-            className="bg-[#2055a4] text-white px-6 py-2 rounded hover:bg-[#1a4a8f] transition-colors"
-            disabled={images.length === 0}
-          >
-            Добавить
-          </button>
-          <button
-            onClick={onClose}
-            className="border border-gray-300 px-6 py-2 rounded hover:bg-gray-100 transition-colors"
-          >
-            Отменить
-          </button>
+          <div className="flex justify-center space-x-4">
+            <button
+                onClick={handleSubmit}
+                className="bg-[#2055a4] text-white px-6 py-2 rounded hover:bg-[#1a4a8f] transition-colors"
+                disabled={images.length === 0}
+            >
+              Добавить
+            </button>
+            <button
+                onClick={onClose}
+                className="border border-gray-300 px-6 py-2 rounded hover:bg-gray-100 transition-colors"
+            >
+              Отменить
+            </button>
+          </div>
         </div>
       </div>
-    </div>
   )
 }

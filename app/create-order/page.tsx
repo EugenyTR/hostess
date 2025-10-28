@@ -22,6 +22,7 @@ import ServiceSearchModal from "@/components/modals/ServiceSearchModal"
 import TechPassportModal from "@/components/modals/TechPassportModal"
 import DatePicker from "@/components/DatePicker"
 import { CitySelector } from "@/components/CitySelector"
+import ImageGalleryModal from "@/components/modals/ImageGalleryModal"
 
 export default function CreateOrder() {
   const router = useRouter()
@@ -113,6 +114,10 @@ export default function CreateOrder() {
   const [showTechPassportModal, setShowTechPassportModal] = useState(false)
   const [currentServiceId, setCurrentServiceId] = useState<number | null>(null)
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+
+  const [showImageGallery, setShowImageGallery] = useState(false)
+  const [galleryImages, setGalleryImages] = useState<ServiceImage[]>([])
+  const [galleryInitialIndex, setGalleryInitialIndex] = useState(0)
 
   // Refs for dropdown handling
   const referralDropdownRef = useRef<HTMLDivElement>(null)
@@ -923,6 +928,32 @@ export default function CreateOrder() {
     })
   }
 
+  const handleOpenImageGallery = (serviceId: number, imageIndex = 0) => {
+    const service = orderServices.find((s) => s.id === serviceId)
+    if (service && service.images.length > 0) {
+      setGalleryImages(service.images)
+      setGalleryInitialIndex(imageIndex)
+      setShowImageGallery(true)
+    }
+  }
+
+  const handleDeleteImageFromGallery = (imageId: number) => {
+    setOrderServices(
+        orderServices.map((service) => {
+          if (service.images.some((img) => img.id === imageId)) {
+            return {
+              ...service,
+              images: service.images.filter((img) => img.id !== imageId),
+            }
+          }
+          return service
+        }),
+    )
+
+    // Обновляем галерею
+    setGalleryImages((prev) => prev.filter((img) => img.id !== imageId))
+  }
+
   return (
       <div className="p-6">
         {/* Navigation Buttons */}
@@ -1442,7 +1473,7 @@ export default function CreateOrder() {
           )}
 
           {/* Services Table */}
-          <div>
+          <div className="overflow-x-auto">
             <table className="min-w-full">
               <thead>
               <tr className="text-left text-[#8e8e8e] text-sm">
@@ -1463,8 +1494,8 @@ export default function CreateOrder() {
               <tbody className="bg-gray-100">
               {orderServices.map((service, index) => (
                   <tr key={service.id} className="border-t border-gray-200">
-                    <td className="py-1 px-2 text-sm">{index + 1}</td>
-                    <td className="py-1 px-2 text-sm">
+                    <td className="py-3 px-4 text-sm">{index + 1}</td>
+                    <td className="py-3 px-4 text-sm">
                       <div className="flex items-center">
                         <span>{service.serviceName}</span>
                         {service.appliedPromotion && (
@@ -1478,7 +1509,7 @@ export default function CreateOrder() {
                         )}
                       </div>
                     </td>
-                    <td className="py-1 px-2 text-sm relative">
+                    <td className="py-3 px-4 text-sm relative">
                       <input
                           type="text"
                           className={`w-full px-2 py-1 border ${
@@ -1495,7 +1526,7 @@ export default function CreateOrder() {
                           </div>
                       )}
                     </td>
-                    <td className="py-1 px-2 text-sm">
+                    <td className="py-3 px-4 text-sm">
                       <div className="flex flex-col">
                         {service.appliedPromotion && service.originalPrice ? (
                             <>
@@ -1507,7 +1538,7 @@ export default function CreateOrder() {
                         )}
                       </div>
                     </td>
-                    <td className="py-1 px-2 text-sm">
+                    <td className="py-3 px-4 text-sm">
                       <div className="flex flex-col">
                         {service.appliedPromotion && service.originalTotal ? (
                             <>
@@ -1519,20 +1550,36 @@ export default function CreateOrder() {
                         )}
                       </div>
                     </td>
-                    <td className="py-1 px-2 text-sm">
+
+                    <td className="py-3 px-4 text-sm">
                       {service.images.length > 0 ? (
-                          <div
-                              className="w-8 h-8 bg-[#2055a4] rounded-full flex items-center justify-center text-white text-xs cursor-pointer"
-                              onClick={() => {
-                                setCurrentServiceId(service.id)
-                                setShowAddImageModal(true)
-                              }}
-                          >
-                            IMG
+                          <div className="flex items-center gap-2">
+                            <div
+                                className="relative w-10 h-10 rounded-lg overflow-hidden cursor-pointer border-2 border-[#2055a4] hover:border-[#1a4a8f] transition-colors"
+                                onClick={() => handleOpenImageGallery(service.id, 0)}
+                            >
+                              <img
+                                  src={service.images[0].url || "/placeholder.svg"}
+                                  alt={service.images[0].name}
+                                  className="w-full h-full object-cover"
+                              />
+                            </div>
+                            {service.images.length > 1 && (
+                                <span className="text-xs text-gray-500">+{service.images.length - 1}</span>
+                            )}
+                            <button
+                                onClick={() => {
+                                  setCurrentServiceId(service.id)
+                                  setShowAddImageModal(true)
+                                }}
+                                className="text-[#2055a4] hover:text-[#1a4a8f] text-xs"
+                            >
+                              Добавить
+                            </button>
                           </div>
                       ) : (
                           <div
-                              className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer"
+                              className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-300 transition-colors"
                               onClick={() => {
                                 setCurrentServiceId(service.id)
                                 setShowAddImageModal(true)
@@ -1542,7 +1589,8 @@ export default function CreateOrder() {
                           </div>
                       )}
                     </td>
-                    <td className="py-1 px-2 text-sm relative">
+
+                    <td className="py-3 px-4 text-sm relative">
                       <div
                           data-dropdown="size"
                           className="flex items-center justify-between border border-gray-300 rounded px-2 py-1 cursor-pointer bg-white"
@@ -1587,7 +1635,7 @@ export default function CreateOrder() {
                           </div>
                       )}
                     </td>
-                    <td className="py-1 px-2 text-sm relative">
+                    <td className="py-3 px-4 text-sm relative">
                       <div
                           data-dropdown="brand"
                           className="flex items-center justify-between border border-gray-300 rounded px-2 py-1 cursor-pointer bg-white"
@@ -1621,7 +1669,7 @@ export default function CreateOrder() {
                           </div>
                       )}
                     </td>
-                    <td className="py-1 px-2 text-sm relative">
+                    <td className="py-3 px-4 text-sm relative">
                       <div
                           data-dropdown="color"
                           className="flex items-center justify-between border border-gray-300 rounded px-2 py-1 cursor-pointer bg-white"
@@ -1655,7 +1703,7 @@ export default function CreateOrder() {
                           </div>
                       )}
                     </td>
-                    <td className="py-1 px-2 text-sm">
+                    <td className="py-3 px-4 text-sm">
                       <div className="flex items-center">
                         {service.techPassport ? (
                             <div
@@ -1678,14 +1726,14 @@ export default function CreateOrder() {
                         />
                       </div>
                     </td>
-                    <td className="py-1 px-2 text-sm relative">
+                    <td className="py-3 px-4 text-sm relative">
                       <DatePicker
                           value={service.readyDate}
                           onChange={(date) => handleReadyDateChange(service.id, date)}
                           className="w-24"
                       />
                     </td>
-                    <td className="py-1 px-2 text-sm">
+                    <td className="py-3 px-4 text-sm">
                       <Trash2
                           className="w-4 h-4 text-gray-400 cursor-pointer"
                           onClick={() => handleRemoveService(service.id)}
@@ -1696,10 +1744,10 @@ export default function CreateOrder() {
               </tbody>
               <tfoot>
               <tr className="border-t border-gray-200">
-                <td colSpan={1} className="py-1 px-2 text-sm font-medium">
+                <td colSpan={2} className="py-3 px-4 text-sm font-medium">
                   Итого:
                 </td>
-                <td colSpan={3} className="py-1 px-2 text-sm">
+                <td colSpan={2} className="py-3 px-4 text-sm">
                   <div className="relative" ref={promocodeDropdownRef}>
                     <div
                         className="flex items-center justify-between border border-gray-300 rounded px-2 py-1 cursor-pointer bg-white"
@@ -1774,7 +1822,7 @@ export default function CreateOrder() {
                     )}
                   </div>
                 </td>
-                <td className="py-1 px-2 text-sm">
+                <td className="py-3 px-4 text-sm">
                   <div className="flex flex-col">
                     {(totalDiscount > 0 || promocodeDiscount > 0) && (
                         <span className="line-through text-gray-400 text-xs">{totalAmount} ₽</span>
@@ -1790,10 +1838,10 @@ export default function CreateOrder() {
               </tr>
               {(totalDiscount > 0 || promocodeDiscount > 0) && (
                   <tr className="border-t border-gray-200">
-                    <td colSpan={1} className="py-2 px-4 text-sm font-medium text-right text-green-600">
+                    <td colSpan={4} className="py-2 px-4 text-sm font-medium text-right text-green-600">
                       Экономия:
                     </td>
-                    <td colSpan={1} className="py-2 px-4 text-sm font-medium text-green-600">
+                    <td className="py-2 px-4 text-sm font-medium text-green-600">
                       {totalDiscount + promocodeDiscount} ₽
                       {promocodeDiscount > 0 && (
                           <div className="text-xs text-gray-500">(промокод: {promocodeDiscount} ₽)</div>
@@ -1984,6 +2032,15 @@ export default function CreateOrder() {
                   setCurrentServiceId(null)
                 }}
                 onSave={handleSaveTechPassport}
+            />
+        )}
+
+        {showImageGallery && (
+            <ImageGalleryModal
+                images={galleryImages}
+                initialIndex={galleryInitialIndex}
+                onClose={() => setShowImageGallery(false)}
+                onDelete={handleDeleteImageFromGallery}
             />
         )}
       </div>

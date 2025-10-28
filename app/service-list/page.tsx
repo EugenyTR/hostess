@@ -9,6 +9,7 @@ import type { Service, ServiceCategory } from "@/types"
 import DeleteServiceModal from "@/components/modals/DeleteServiceModal"
 import AddServiceModal from "@/components/modals/AddServiceModal"
 import ImportServicesModal from "@/components/modals/ImportServicesModal"
+import { exportToCSV, exportToXLS } from "@/lib/exportUtils"
 
 // Моковые данные для категорий
 const mockCategories: ServiceCategory[] = [
@@ -50,16 +51,16 @@ export default function ServiceListPage() {
   // If user is cashier, show loading while redirecting
   if (user?.role === "cashier") {
     return (
-      <div className="p-6">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
-          <div className="space-y-4">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-24 bg-gray-200 rounded"></div>
-            ))}
+        <div className="p-6">
+          <div className="animate-pulse">
+            <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
+            <div className="space-y-4">
+              {[...Array(6)].map((_, i) => (
+                  <div key={i} className="h-24 bg-gray-200 rounded"></div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
     )
   }
 
@@ -195,61 +196,38 @@ export default function ServiceListPage() {
     console.log(`Импортировано ${importedServices.length} услуг`)
   }
 
-  // Функция экспорта услуг в Excel
-  const handleExportToExcel = () => {
+  const handleExportToExcel = (format: "csv" | "xls" = "csv") => {
     try {
       // Подготавливаем данные для экспорта
       const exportData = filteredServices.map((service) => ({
+        ID: service.id,
         "Название услуги": service.name,
         Категория: service.category,
         "Цена (₽)": service.price,
         "Цена со скидкой (₽)": service.currentPromotion
-          ? service.currentPromotion.discountType === "percentage"
-            ? Math.round(service.price * (1 - service.currentPromotion.discountAmount / 100))
-            : service.price - service.currentPromotion.discountAmount
-          : service.price,
+            ? service.currentPromotion.discountType === "percentage"
+                ? Math.round(service.price * (1 - service.currentPromotion.discountAmount / 100))
+                : service.price - service.currentPromotion.discountAmount
+            : service.price,
         "Активная акция": service.currentPromotion ? service.currentPromotion.promotionName : "Нет",
         "Размер скидки": service.currentPromotion
-          ? `${service.currentPromotion.discountAmount}${service.currentPromotion.discountType === "percentage" ? "%" : "₽"}`
-          : "Нет",
-        Описание: service.description,
+            ? `${service.currentPromotion.discountAmount}${service.currentPromotion.discountType === "percentage" ? "%" : "₽"}`
+            : "Нет",
+        Описание: service.description || "",
         Статус: service.isActive ? "Активна" : "Неактивна",
         "Дата создания": service.createdAt,
-        "Дата обновления": service.updatedAt,
+        "Дата обновления": service.updatedAt || "",
       }))
 
-      // Создаем CSV контент
-      const headers = Object.keys(exportData[0] || {})
-      const csvContent = [
-        headers.join(","),
-        ...exportData.map((row) =>
-          headers
-            .map((header) => {
-              const value = row[header] || ""
-              // Экранируем значения, содержащие запятые или кавычки
-              return typeof value === "string" && (value.includes(",") || value.includes('"'))
-                ? `"${value.replace(/"/g, '""')}"`
-                : value
-            })
-            .join(","),
-        ),
-      ].join("\n")
+      const filename = `services_export_${new Date().toISOString().split("T")[0]}`
 
-      // Создаем и скачиваем файл
-      const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" })
-      const link = document.createElement("a")
-      const url = URL.createObjectURL(blob)
+      if (format === "csv") {
+        exportToCSV(exportData, filename)
+      } else {
+        exportToXLS(exportData, filename)
+      }
 
-      link.setAttribute("href", url)
-      link.setAttribute("download", `services_export_${new Date().toISOString().split("T")[0]}.csv`)
-      link.style.visibility = "hidden"
-
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      URL.revokeObjectURL(url)
-
-      console.log(`Экспортировано ${exportData.length} услуг в CSV файл`)
+      console.log(`Экспортировано ${exportData.length} услуг в ${format.toUpperCase()} файл`)
     } catch (error) {
       console.error("Ошибка при экспорте услуг:", error)
       alert("Произошла ошибка при экспорте данных")
@@ -257,89 +235,102 @@ export default function ServiceListPage() {
   }
 
   return (
-    <div className="p-6 bg-white min-h-screen">
-      {/* Заголовок и кнопки */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-[#2c2c33]">Услуги</h1>
-        <div className="flex space-x-2">
-          <button
-            onClick={() => setIsImportModalOpen(true)}
-            className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-          >
-            <Upload className="h-4 w-4 mr-2" />
-            Импорт
-          </button>
-          <button
-            onClick={handleExportToExcel}
-            className="flex items-center px-4 py-2 bg-[#2055a4] text-white rounded-lg hover:bg-[#1a4590] transition-colors"
-          >
-            <Download className="h-4 w-4 mr-2" />
-            Экспорт
-          </button>
-          <button
-            onClick={() => setIsAddModalOpen(true)}
-            className="bg-[#2055a4] text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-[#1a4590] transition-colors"
-          >
-            <Plus size={20} />
-            Создать услугу
-          </button>
-        </div>
-      </div>
-
-      {/* Категории */}
-      <div className="flex flex-wrap gap-3 mb-6">
-        <button
-          onClick={() => {
-            setSelectedCategory("all")
-            setCurrentPage(1)
-          }}
-          className={`px-4 py-2 rounded-full border transition-colors ${
-            selectedCategory === "all"
-              ? "bg-[#2055a4] text-white border-[#2055a4]"
-              : "bg-white text-[#2c2c33] border-gray-300 hover:border-[#2055a4] hover:text-[#2055a4]"
-          }`}
-        >
-          Все категории
-        </button>
-        {categories
-          .filter((cat) => ["leather", "casual", "fur", "home", "bags", "laundry"].includes(cat.id))
-          .map((category) => (
+      <div className="p-6 bg-white min-h-screen">
+        {/* Заголовок и кнопки */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-semibold text-[#2c2c33]">Услуги</h1>
+          <div className="flex space-x-2">
             <button
-              key={category.id}
+                onClick={() => setIsImportModalOpen(true)}
+                className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+            >
+              <Upload className="h-4 w-4 mr-2" />
+              Импорт
+            </button>
+            <div className="relative group">
+              <button className="flex items-center px-4 py-2 bg-[#2055a4] text-white rounded-lg hover:bg-[#1a4590] transition-colors">
+                <Download className="h-4 w-4 mr-2" />
+                Экспорт
+              </button>
+              <div className="absolute right-0 mt-1 w-32 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+                <button
+                    onClick={() => handleExportToExcel("csv")}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg"
+                >
+                  CSV формат
+                </button>
+                <button
+                    onClick={() => handleExportToExcel("xls")}
+                    className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-lg"
+                >
+                  XLS формат
+                </button>
+              </div>
+            </div>
+            <button
+                onClick={() => setIsAddModalOpen(true)}
+                className="bg-[#2055a4] text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-[#1a4590] transition-colors"
+            >
+              <Plus size={20} />
+              Создать услугу
+            </button>
+          </div>
+        </div>
+
+        {/* Категории */}
+        <div className="flex flex-wrap gap-3 mb-6">
+          <button
               onClick={() => {
-                setSelectedCategory(category.id)
+                setSelectedCategory("all")
                 setCurrentPage(1)
               }}
               className={`px-4 py-2 rounded-full border transition-colors ${
-                selectedCategory === category.id
-                  ? "bg-[#2055a4] text-white border-[#2055a4]"
-                  : "bg-white text-[#2c2c33] border-gray-300 hover:border-[#2055a4] hover:text-[#2055a4]"
+                  selectedCategory === "all"
+                      ? "bg-[#2055a4] text-white border-[#2055a4]"
+                      : "bg-white text-[#2c2c33] border-gray-300 hover:border-[#2055a4] hover:text-[#2055a4]"
               }`}
-            >
-              {category.name}
-            </button>
-          ))}
-      </div>
+          >
+            Все категории
+          </button>
+          {categories
+              .filter((cat) => ["leather", "casual", "fur", "home", "bags", "laundry"].includes(cat.id))
+              .map((category) => (
+                  <button
+                      key={category.id}
+                      onClick={() => {
+                        setSelectedCategory(category.id)
+                        setCurrentPage(1)
+                      }}
+                      className={`px-4 py-2 rounded-full border transition-colors ${
+                          selectedCategory === category.id
+                              ? "bg-[#2055a4] text-white border-[#2055a4]"
+                              : "bg-white text-[#2c2c33] border-gray-300 hover:border-[#2055a4] hover:text-[#2055a4]"
+                      }`}
+                  >
+                    {category.name}
+                  </button>
+              ))}
+        </div>
 
-      {/* Поиск */}
-      <div className="relative mb-6">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-        <input
-          type="text"
-          placeholder="Поиск услуги"
-          value={searchTerm}
-          onChange={(e) => {
-            setSearchTerm(e.target.value)
-            setCurrentPage(1)
-          }}
-          className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2055a4] focus:border-transparent"
-        />
-      </div>
+        {/* Поиск */}
+        <div className="relative mb-6">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+          <input
+              type="text"
+              placeholder="Поиск услуги"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value)
+                setCurrentPage(1)
+              }}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2055a4] focus:border-transparent"
+          />
+        </div>
 
-      {/* Таблица услуг */}
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-        <table className="w-full">
-          <thead className="bg-gray-50">
+        {/* Таблица услуг */}
+        <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+          <table className="w-full">
+            <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -352,164 +343,164 @@ export default function ServiceListPage() {
                 Действия
               </th>
             </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
             {paginatedServices.map((service) => {
               const hasPromotion = !!service.currentPromotion
               const discountedPrice = hasPromotion
-                ? service.currentPromotion.discountType === "percentage"
-                  ? Math.round(service.price * (1 - service.currentPromotion.discountAmount / 100))
-                  : service.price - service.currentPromotion.discountAmount
-                : service.price
+                  ? service.currentPromotion.discountType === "percentage"
+                      ? Math.round(service.price * (1 - service.currentPromotion.discountAmount / 100))
+                      : service.price - service.currentPromotion.discountAmount
+                  : service.price
 
               return (
-                <tr key={service.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2c2c33]">{service.id}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-[#2c2c33]">{service.name}</div>
-                    <div className="text-sm text-gray-500">{service.description}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2c2c33]">
-                    <div className="flex items-center space-x-2">
-                      {hasPromotion ? (
-                        <>
-                          <span className="line-through text-gray-400">{service.price} ₽</span>
-                          <span className="font-medium text-green-600">{discountedPrice} ₽</span>
-                        </>
-                      ) : (
-                        <span>{service.price} ₽</span>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {hasPromotion ? (
-                      <div className="flex items-center">
-                        <Tag className="w-4 h-4 text-green-600 mr-1" />
-                        <div>
-                          <div className="text-sm font-medium text-green-600">
-                            {service.currentPromotion.promotionName}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            -{service.currentPromotion.discountAmount}
-                            {service.currentPromotion.discountType === "percentage" ? "%" : "₽"}
-                          </div>
-                        </div>
+                  <tr key={service.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2c2c33]">{service.id}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="text-sm font-medium text-[#2c2c33]">{service.name}</div>
+                      <div className="text-sm text-gray-500">{service.description}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-[#2c2c33]">
+                      <div className="flex items-center space-x-2">
+                        {hasPromotion ? (
+                            <>
+                              <span className="line-through text-gray-400">{service.price} ₽</span>
+                              <span className="font-medium text-green-600">{discountedPrice} ₽</span>
+                            </>
+                        ) : (
+                            <span>{service.price} ₽</span>
+                        )}
                       </div>
-                    ) : (
-                      <span className="text-sm text-gray-400">Нет акций</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <button
-                      onClick={() => handleToggleStatus(service.id)}
-                      className={`px-3 py-1 rounded-full text-xs font-medium border ${
-                        service.isActive
-                          ? "bg-green-100 text-green-800 border-green-200"
-                          : "bg-red-100 text-red-800 border-red-200"
-                      }`}
-                    >
-                      {service.isActive ? "Активен" : "Деактивирован"}
-                    </button>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <div className="flex items-center gap-4">
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {hasPromotion ? (
+                          <div className="flex items-center">
+                            <Tag className="w-4 h-4 text-green-600 mr-1" />
+                            <div>
+                              <div className="text-sm font-medium text-green-600">
+                                {service.currentPromotion.promotionName}
+                              </div>
+                              <div className="text-xs text-gray-500">
+                                -{service.currentPromotion.discountAmount}
+                                {service.currentPromotion.discountType === "percentage" ? "%" : "₽"}
+                              </div>
+                            </div>
+                          </div>
+                      ) : (
+                          <span className="text-sm text-gray-400">Нет акций</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
                       <button
-                        onClick={() => handleEditClick(service)}
-                        className="text-gray-400 hover:text-[#2055a4] transition-colors"
-                        title="Редактировать"
+                          onClick={() => handleToggleStatus(service.id)}
+                          className={`px-3 py-1 rounded-full text-xs font-medium border ${
+                              service.isActive
+                                  ? "bg-green-100 text-green-800 border-green-200"
+                                  : "bg-red-100 text-red-800 border-red-200"
+                          }`}
                       >
-                        <Edit size={18} />
+                        {service.isActive ? "Активен" : "Деактивирован"}
                       </button>
-                      <button
-                        onClick={() => handleDeleteClick(service.id)}
-                        className="text-gray-400 hover:text-red-600 transition-colors"
-                        title="Удалить"
-                      >
-                        <Trash2 size={18} />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex items-center gap-4">
+                        <button
+                            onClick={() => handleEditClick(service)}
+                            className="text-gray-400 hover:text-[#2055a4] transition-colors"
+                            title="Редактировать"
+                        >
+                          <Edit size={18} />
+                        </button>
+                        <button
+                            onClick={() => handleDeleteClick(service.id)}
+                            className="text-gray-400 hover:text-red-600 transition-colors"
+                            title="Удалить"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
               )
             })}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Пагинация */}
-      {totalPages > 1 && (
-        <div className="flex justify-center items-center mt-6 gap-2">
-          <button
-            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-            disabled={currentPage === 1}
-            className="px-3 py-2 rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            ←
-          </button>
-
-          {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-            const pageNum = i + 1
-            return (
-              <button
-                key={pageNum}
-                onClick={() => setCurrentPage(pageNum)}
-                className={`px-3 py-2 rounded-lg ${
-                  currentPage === pageNum
-                    ? "bg-[#2055a4] text-white"
-                    : "border border-gray-300 text-gray-500 hover:bg-gray-50"
-                }`}
-              >
-                {pageNum}
-              </button>
-            )
-          })}
-
-          {totalPages > 5 && (
-            <>
-              <span className="px-2 text-gray-500">...</span>
-              <button
-                onClick={() => setCurrentPage(totalPages)}
-                className={`px-3 py-2 rounded-lg ${
-                  currentPage === totalPages
-                    ? "bg-[#2055a4] text-white"
-                    : "border border-gray-300 text-gray-500 hover:bg-gray-50"
-                }`}
-              >
-                {totalPages}
-              </button>
-            </>
-          )}
-
-          <button
-            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-            disabled={currentPage === totalPages}
-            className="px-3 py-2 rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            →
-          </button>
+            </tbody>
+          </table>
         </div>
-      )}
 
-      {/* Модальные окна */}
-      <DeleteServiceModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleConfirmDelete}
-      />
+        {/* Пагинация */}
+        {totalPages > 1 && (
+            <div className="flex justify-center items-center mt-6 gap-2">
+              <button
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                ←
+              </button>
 
-      <AddServiceModal
-        isOpen={isAddModalOpen}
-        onClose={handleCloseModal}
-        onSave={handleSaveService}
-        categories={categories}
-        editingService={editingService}
-      />
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const pageNum = i + 1
+                return (
+                    <button
+                        key={pageNum}
+                        onClick={() => setCurrentPage(pageNum)}
+                        className={`px-3 py-2 rounded-lg ${
+                            currentPage === pageNum
+                                ? "bg-[#2055a4] text-white"
+                                : "border border-gray-300 text-gray-500 hover:bg-gray-50"
+                        }`}
+                    >
+                      {pageNum}
+                    </button>
+                )
+              })}
 
-      <ImportServicesModal
-        isOpen={isImportModalOpen}
-        onClose={() => setIsImportModalOpen(false)}
-        onImport={handleImportServices}
-      />
-    </div>
+              {totalPages > 5 && (
+                  <>
+                    <span className="px-2 text-gray-500">...</span>
+                    <button
+                        onClick={() => setCurrentPage(totalPages)}
+                        className={`px-3 py-2 rounded-lg ${
+                            currentPage === totalPages
+                                ? "bg-[#2055a4] text-white"
+                                : "border border-gray-300 text-gray-500 hover:bg-gray-50"
+                        }`}
+                    >
+                      {totalPages}
+                    </button>
+                  </>
+              )}
+
+              <button
+                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2 rounded-lg border border-gray-300 text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                →
+              </button>
+            </div>
+        )}
+
+        {/* Модальные окна */}
+        <DeleteServiceModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            onConfirm={handleConfirmDelete}
+        />
+
+        <AddServiceModal
+            isOpen={isAddModalOpen}
+            onClose={handleCloseModal}
+            onSave={handleSaveService}
+            categories={categories}
+            editingService={editingService}
+        />
+
+        <ImportServicesModal
+            isOpen={isImportModalOpen}
+            onClose={() => setIsImportModalOpen(false)}
+            onImport={handleImportServices}
+        />
+      </div>
   )
 }
