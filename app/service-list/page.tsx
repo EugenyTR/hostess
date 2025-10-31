@@ -245,7 +245,7 @@ export default function ServiceListPage() {
                 className="flex items-center px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
             >
               <Upload className="h-4 w-4 mr-2" />
-              Импорт
+              ��мпорт
             </button>
             <div className="relative group">
               <button className="flex items-center px-4 py-2 bg-[#2055a4] text-white rounded-lg hover:bg-[#1a4590] transition-colors">

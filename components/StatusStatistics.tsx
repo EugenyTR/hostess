@@ -186,7 +186,7 @@ export function StatusStatistics({ orders, className = "" }: StatusStatisticsPro
 
     setStatusCounts(stats)
 
-    // Расчет изменений по сравнению с предыдущим периодом
+    // Расчет изменений по сравнению с предыду��им периодом
     // В реальном приложении здесь должна быть логика сравнения с предыдущим периодом
     // Для демонстрации используем случайные значения
     setComparisonData({
@@ -368,253 +368,253 @@ export function StatusStatistics({ orders, className = "" }: StatusStatisticsPro
   }, [filteredOrders])
 
   return (
-    <div className={`bg-white rounded-lg shadow p-4 ${className}`}>
-      <h2 className="text-lg font-medium mb-4">Статистика по статусам</h2>
+      <div className={`bg-white rounded-lg shadow p-4 ${className}`}>
+        <h2 className="text-lg font-medium mb-4">Статистика по статусам</h2>
 
-      {/* Фильтр по периоду */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {periodOptions.map((option) => (
-          <button
-            key={option.value}
-            onClick={() => setSelectedPeriod(option.value)}
-            className={`px-3 py-1 text-sm rounded-full ${
-              selectedPeriod === option.value
-                ? "bg-[#2055a4] text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Фильтр по дате */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        <div className="relative flex-1 min-w-[200px]">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Calendar className="h-4 w-4 text-gray-400" />
-          </div>
-          <input
-            type="text"
-            placeholder="Начальная дата"
-            value={dateRange.start}
-            onChange={(e) => setDateRange((prev) => ({ ...prev, start: e.target.value }))}
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm"
-          />
-        </div>
-
-        <div className="relative flex-1 min-w-[200px]">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Calendar className="h-4 w-4 text-gray-400" />
-          </div>
-          <input
-            type="text"
-            placeholder="Конечная дата"
-            value={dateRange.end}
-            onChange={(e) => setDateRange((prev) => ({ ...prev, end: e.target.value }))}
-            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm"
-          />
-        </div>
-      </div>
-
-      {/* Карточки со статистикой */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div className="bg-green-50 rounded-lg p-4 border border-green-100">
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="text-sm text-gray-500">Выполнено</div>
-              <div className="text-2xl font-bold mt-1">{comparisonData.completed.count}</div>
-            </div>
-            <div
-              className={`flex items-center text-xs ${
-                comparisonData.completed.change >= 0 ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              {comparisonData.completed.change >= 0 ? (
-                <ArrowUp className="w-3 h-3 mr-1" />
-              ) : (
-                <ArrowDown className="w-3 h-3 mr-1" />
-              )}
-              {Math.abs(comparisonData.completed.change)}%
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-100">
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="text-sm text-gray-500">В работе</div>
-              <div className="text-2xl font-bold mt-1">{comparisonData.inProgress.count}</div>
-            </div>
-            <div
-              className={`flex items-center text-xs ${
-                comparisonData.inProgress.change >= 0 ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              {comparisonData.inProgress.change >= 0 ? (
-                <ArrowUp className="w-3 h-3 mr-1" />
-              ) : (
-                <ArrowDown className="w-3 h-3 mr-1" />
-              )}
-              {Math.abs(comparisonData.inProgress.change)}%
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-red-50 rounded-lg p-4 border border-red-100">
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="text-sm text-gray-500">Ожидание</div>
-              <div className="text-2xl font-bold mt-1">{comparisonData.waiting.count}</div>
-            </div>
-            <div
-              className={`flex items-center text-xs ${
-                comparisonData.waiting.change >= 0 ? "text-green-600" : "text-red-600"
-              }`}
-            >
-              {comparisonData.waiting.change >= 0 ? (
-                <ArrowUp className="w-3 h-3 mr-1" />
-              ) : (
-                <ArrowDown className="w-3 h-3 mr-1" />
-              )}
-              {Math.abs(comparisonData.waiting.change)}%
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Переключатель типа графика */}
-      <div className="flex justify-center mb-4">
-        <div className="inline-flex rounded-md shadow-sm">
-          <button
-            onClick={() => setActiveChart("line")}
-            className={`px-4 py-2 text-sm font-medium rounded-l-md ${
-              activeChart === "line"
-                ? "bg-[#2055a4] text-white"
-                : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
-            }`}
-          >
-            <LineChartIcon className="w-4 h-4 inline-block mr-1" />
-            Линейный
-          </button>
-          <button
-            onClick={() => setActiveChart("bar")}
-            className={`px-4 py-2 text-sm font-medium ${
-              activeChart === "bar"
-                ? "bg-[#2055a4] text-white"
-                : "bg-white text-gray-700 hover:bg-gray-50 border-t border-b border-gray-300"
-            }`}
-          >
-            <BarChartIcon className="w-4 h-4 inline-block mr-1" />
-            Столбчатый
-          </button>
-          <button
-            onClick={() => setActiveChart("pie")}
-            className={`px-4 py-2 text-sm font-medium rounded-r-md ${
-              activeChart === "pie"
-                ? "bg-[#2055a4] text-white"
-                : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
-            }`}
-          >
-            <PieChartIcon className="w-4 h-4 inline-block mr-1" />
-            Круговой
-          </button>
-        </div>
-      </div>
-
-      {/* Графики */}
-      {historicalData.labels && (
-        <div className="mb-6">
-          {activeChart === "line" && (
-            <LineChart
-              data={historicalData.lineSeries}
-              labels={historicalData.labels}
-              title="Динамика статусов заказов"
-              height={300}
-              colors={["#10b981", "#f59e0b", "#ef4444"]}
-            />
-          )}
-
-          {activeChart === "bar" && (
-            <BarChart data={historicalData.barData} title="Количество заказов по статусам" height={300} />
-          )}
-
-          {activeChart === "pie" && (
-            <PieChart data={historicalData.pieData} title="Распределение статусов" size={300} />
-          )}
-        </div>
-      )}
-
-      {/* Визуализация процентного соотношения */}
-      <div className="mb-6">
-        <div className="text-sm font-medium mb-2">Распределение статусов</div>
-        <div className="h-6 flex rounded-full overflow-hidden">
-          {statusCounts.map((item) => (
-            <div
-              key={item.status}
-              className={`${
-                item.status === "completed"
-                  ? "bg-green-500"
-                  : item.status === "in-progress"
-                    ? "bg-yellow-500"
-                    : "bg-red-500"
-              }`}
-              style={{ width: `${item.percentage}%` }}
-              title={`${getOrderStatusText(item.status)}: ${item.percentage}%`}
-            ></div>
+        {/* Фильтр по периоду */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {periodOptions.map((option) => (
+              <button
+                  key={option.value}
+                  onClick={() => setSelectedPeriod(option.value)}
+                  className={`px-3 py-1 text-sm rounded-full ${
+                      selectedPeriod === option.value
+                          ? "bg-[#2055a4] text-white"
+                          : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+              >
+                {option.label}
+              </button>
           ))}
         </div>
-        <div className="flex flex-wrap justify-between mt-2">
-          {statusCounts.map((item) => (
-            <div key={item.status} className="flex items-center">
+
+        {/* Фильтр по дате */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          <div className="relative flex-1 min-w-[200px]">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Calendar className="h-4 w-4 text-gray-400" />
+            </div>
+            <input
+                type="text"
+                placeholder="Начальная дата"
+                value={dateRange.start}
+                onChange={(e) => setDateRange((prev) => ({ ...prev, start: e.target.value }))}
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm"
+            />
+          </div>
+
+          <div className="relative flex-1 min-w-[200px]">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Calendar className="h-4 w-4 text-gray-400" />
+            </div>
+            <input
+                type="text"
+                placeholder="Конечная дата"
+                value={dateRange.end}
+                onChange={(e) => setDateRange((prev) => ({ ...prev, end: e.target.value }))}
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm"
+            />
+          </div>
+        </div>
+
+        {/* Карточки со статистикой */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-green-50 rounded-lg p-4 border border-green-100">
+            <div className="flex justify-between items-start">
+              <div>
+                <div className="text-sm text-gray-500">Выполнено</div>
+                <div className="text-2xl font-bold mt-1">{comparisonData.completed.count}</div>
+              </div>
               <div
-                className={`w-3 h-3 rounded-full mr-1 ${
-                  item.status === "completed"
-                    ? "bg-green-500"
-                    : item.status === "in-progress"
-                      ? "bg-yellow-500"
-                      : "bg-red-500"
+                  className={`flex items-center text-xs ${
+                      comparisonData.completed.change >= 0 ? "text-green-600" : "text-red-600"
+                  }`}
+              >
+                {comparisonData.completed.change >= 0 ? (
+                    <ArrowUp className="w-3 h-3 mr-1" />
+                ) : (
+                    <ArrowDown className="w-3 h-3 mr-1" />
+                )}
+                {Math.abs(comparisonData.completed.change)}%
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-100">
+            <div className="flex justify-between items-start">
+              <div>
+                <div className="text-sm text-gray-500">В работе</div>
+                <div className="text-2xl font-bold mt-1">{comparisonData.inProgress.count}</div>
+              </div>
+              <div
+                  className={`flex items-center text-xs ${
+                      comparisonData.inProgress.change >= 0 ? "text-green-600" : "text-red-600"
+                  }`}
+              >
+                {comparisonData.inProgress.change >= 0 ? (
+                    <ArrowUp className="w-3 h-3 mr-1" />
+                ) : (
+                    <ArrowDown className="w-3 h-3 mr-1" />
+                )}
+                {Math.abs(comparisonData.inProgress.change)}%
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-red-50 rounded-lg p-4 border border-red-100">
+            <div className="flex justify-between items-start">
+              <div>
+                <div className="text-sm text-gray-500">Ожидание</div>
+                <div className="text-2xl font-bold mt-1">{comparisonData.waiting.count}</div>
+              </div>
+              <div
+                  className={`flex items-center text-xs ${
+                      comparisonData.waiting.change >= 0 ? "text-green-600" : "text-red-600"
+                  }`}
+              >
+                {comparisonData.waiting.change >= 0 ? (
+                    <ArrowUp className="w-3 h-3 mr-1" />
+                ) : (
+                    <ArrowDown className="w-3 h-3 mr-1" />
+                )}
+                {Math.abs(comparisonData.waiting.change)}%
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Переключатель типа графика */}
+        <div className="flex justify-center mb-4">
+          <div className="inline-flex rounded-md shadow-sm">
+            <button
+                onClick={() => setActiveChart("line")}
+                className={`px-4 py-2 text-sm font-medium rounded-l-md ${
+                    activeChart === "line"
+                        ? "bg-[#2055a4] text-white"
+                        : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
                 }`}
-              ></div>
-              <span className="text-xs text-gray-500">
+            >
+              <LineChartIcon className="w-4 h-4 inline-block mr-1" />
+              Линейный
+            </button>
+            <button
+                onClick={() => setActiveChart("bar")}
+                className={`px-4 py-2 text-sm font-medium ${
+                    activeChart === "bar"
+                        ? "bg-[#2055a4] text-white"
+                        : "bg-white text-gray-700 hover:bg-gray-50 border-t border-b border-gray-300"
+                }`}
+            >
+              <BarChartIcon className="w-4 h-4 inline-block mr-1" />
+              Столбчатый
+            </button>
+            <button
+                onClick={() => setActiveChart("pie")}
+                className={`px-4 py-2 text-sm font-medium rounded-r-md ${
+                    activeChart === "pie"
+                        ? "bg-[#2055a4] text-white"
+                        : "bg-white text-gray-700 hover:bg-gray-50 border border-gray-300"
+                }`}
+            >
+              <PieChartIcon className="w-4 h-4 inline-block mr-1" />
+              Круговой
+            </button>
+          </div>
+        </div>
+
+        {/* Графики */}
+        {historicalData.labels && (
+            <div className="mb-6">
+              {activeChart === "line" && (
+                  <LineChart
+                      data={historicalData.lineSeries}
+                      labels={historicalData.labels}
+                      title="Динамика статусов заказов"
+                      height={300}
+                      colors={["#10b981", "#f59e0b", "#ef4444"]}
+                  />
+              )}
+
+              {activeChart === "bar" && (
+                  <BarChart data={historicalData.barData} title="Количество заказов по статусам" height={300} />
+              )}
+
+              {activeChart === "pie" && (
+                  <PieChart data={historicalData.pieData} title="Распределение статусов" size={300} />
+              )}
+            </div>
+        )}
+
+        {/* Визуализация процентного соотношения */}
+        <div className="mb-6">
+          <div className="text-sm font-medium mb-2">Распределение статусов</div>
+          <div className="h-6 flex rounded-full overflow-hidden">
+            {statusCounts.map((item) => (
+                <div
+                    key={item.status}
+                    className={`${
+                        item.status === "completed"
+                            ? "bg-green-500"
+                            : item.status === "in-progress"
+                            ? "bg-yellow-500"
+                            : "bg-red-500"
+                    }`}
+                    style={{ width: `${item.percentage}%` }}
+                    title={`${getOrderStatusText(item.status)}: ${item.percentage}%`}
+                ></div>
+            ))}
+          </div>
+          <div className="flex flex-wrap justify-between mt-2">
+            {statusCounts.map((item) => (
+                <div key={item.status} className="flex items-center">
+                  <div
+                      className={`w-3 h-3 rounded-full mr-1 ${
+                          item.status === "completed"
+                              ? "bg-green-500"
+                              : item.status === "in-progress"
+                              ? "bg-yellow-500"
+                              : "bg-red-500"
+                      }`}
+                  ></div>
+                  <span className="text-xs text-gray-500">
                 {getOrderStatusText(item.status)}: {item.percentage}%
               </span>
-            </div>
-          ))}
+                </div>
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Таблица с детальной статистикой */}
-      <div>
-        <div className="text-sm font-medium mb-2">Детальная статистика</div>
-        <table className="min-w-full">
-          <thead>
+        {/* Таблица с детальной статистикой */}
+        <div>
+          <div className="text-sm font-medium mb-2">Детальная статистика</div>
+          <table className="min-w-full">
+            <thead>
             <tr className="text-left text-xs text-gray-500 border-b">
               <th className="pb-2 font-medium">Статус</th>
               <th className="pb-2 font-medium">Количество</th>
               <th className="pb-2 font-medium">Процент</th>
             </tr>
-          </thead>
-          <tbody>
+            </thead>
+            <tbody>
             {statusCounts.map((item) => (
-              <tr key={item.status} className="border-b last:border-b-0">
-                <td className="py-2">
+                <tr key={item.status} className="border-b last:border-b-0">
+                  <td className="py-2">
                   <span className={`inline-block px-2 py-1 text-xs rounded-full ${getOrderStatusClass(item.status)}`}>
                     {getOrderStatusText(item.status)}
                   </span>
-                </td>
-                <td className="py-2">{item.count}</td>
-                <td className="py-2">{item.percentage}%</td>
-              </tr>
+                  </td>
+                  <td className="py-2">{item.count}</td>
+                  <td className="py-2">{item.percentage}%</td>
+                </tr>
             ))}
             <tr className="font-medium">
               <td className="py-2">Всего</td>
               <td className="py-2">{filteredOrders.length}</td>
               <td className="py-2">100%</td>
             </tr>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
   )
 }
